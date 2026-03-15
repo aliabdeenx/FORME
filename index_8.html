@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Formé — Web Design & Digital Art by Ali Abdeen. Cairo-based designer crafting unique, animated websites.">
+<title>Formé — Ali Abdeen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Outfit:wght@200;300;400;500&family=Cairo:wght@300;400;500;600;700&family=Great+Vibes&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & TOKENS ─────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#060605;
+  --glass:rgba(255,255,255,0.04);
+  --glass-md:rgba(255,255,255,0.07);
+  --glass-b:rgba(255,255,255,0.09);
+  --glass-bs:rgba(255,255,255,0.16);
+  --ore:#FF6B2C;
+  --ore2:#FF9155;
+  --ore-dim:rgba(255,107,44,0.12);
+  --ore-glow:rgba(255,107,44,0.22);
+  --text:#F0EBE4;
+  --text2:rgba(240,235,228,0.50);
+  --text3:rgba(240,235,228,0.26);
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Outfit',system-ui,sans-serif;
+  --ar:'Cairo',system-ui,sans-serif;
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh}
+
+/* ── GRAIN OVERLAY ──────────────────────────────────────────── */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:1;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity:.4;mix-blend-mode:overlay
+}
+
+/* ── BG CANVAS ──────────────────────────────────────────────── */
+#bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+/* ── CURSOR GLOW ────────────────────────────────────────────── */
+#cursor-glow{
+  position:fixed;pointer-events:none;z-index:3;
+  width:480px;height:480px;border-radius:50%;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(circle,rgba(255,107,44,0.055) 0%,transparent 70%);
+  transition:opacity .5s;opacity:0;will-change:transform
+}
+body:hover #cursor-glow{opacity:1}
+
+/* ── NAV ────────────────────────────────────────────────────── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:400;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 52px;height:68px;
+  background:rgba(6,6,5,0.5);
+  backdrop-filter:blur(36px) saturate(1.8);
+  -webkit-backdrop-filter:blur(36px) saturate(1.8);
+  border-bottom:1px solid var(--glass-b);
+  transition:background .4s
+}
+nav.scrolled{background:rgba(6,6,5,0.9)}
+
+.logo-en{
+  font-family:'Great Vibes',cursive;font-size:30px;font-weight:400;
+  color:var(--text);text-decoration:none;letter-spacing:.02em;
+  transition:transform .5s var(--ease)
+}
+.logo-ar{
+  font-family:'Amiri',serif;font-size:26px;font-weight:400;font-style:italic;
+  color:var(--text);text-decoration:none;display:none;letter-spacing:.02em
+}
+.logo-en span,.logo-ar span{color:var(--ore)}
+.logo-en:hover{transform:scale(1.06)}
+
+nav ul{list-style:none;display:flex;gap:32px;align-items:center}
+nav ul li a{
+  font-size:11px;font-weight:300;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text2);text-decoration:none;transition:color .2s;
+  position:relative
+}
+nav ul li a::after{
+  content:'';position:absolute;bottom:-3px;left:0;right:0;
+  height:1px;background:var(--ore);
+  transform:scaleX(0);transition:transform .25s var(--ease);
+  transform-origin:left
+}
+nav ul li a:hover{color:var(--ore)}
+nav ul li a:hover::after{transform:scaleX(1)}
+
+.nav-cta{
+  background:var(--ore-dim)!important;
+  border:1px solid var(--ore-glow)!important;
+  color:var(--ore)!important;padding:8px 22px!important;
+  border-radius:100px!important;letter-spacing:.06em!important;
+  transition:background .2s,color .2s,transform .2s!important
+}
+.nav-cta:hover{background:var(--ore)!important;color:#fff!important;transform:translateY(-1px)!important}
+.nav-cta::after{display:none!important}
+
+.lang-toggle{
+  display:flex;align-items:center;gap:2px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid var(--glass-b);border-radius:100px;
+  padding:3px;margin-left:28px
+}
+.lb{
+  padding:5px 14px;font-size:10px;font-weight:500;
+  letter-spacing:.07em;text-transform:uppercase;
+  cursor:pointer;border:none;background:transparent;
+  color:var(--text3);font-family:var(--sans);
+  border-radius:100px;transition:background .2s,color .2s
+}
+.lb.on{background:var(--ore);color:#fff}
+
+/* ── HERO ───────────────────────────────────────────────────── */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;padding:100px 24px 80px;
+  position:relative;z-index:2
+}
+
+/* SVG handwriting logo */
+.hero-forme{
+  display:flex;align-items:center;justify-content:center;
+  line-height:1
+}
+#logo-svg{
+  width:clamp(280px,55vw,640px);
+  height:auto;overflow:visible
+}
+
+/* Base text — stroke-only during draw, fill reveals after */
+#logo-text{
+  font-family:'Great Vibes',cursive;
+  font-size:160px;
+  fill:transparent;
+  stroke:var(--ore);
+  stroke-width:0.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  paint-order:stroke fill;
+  dominant-baseline:auto
+}
+#logo-text.lit{
+  fill:#c94e18;
+  filter:url(#neon-glow)
+}
+#logo-dot-span{
+  fill:transparent;
+  stroke:var(--ore);
+  stroke-width:0.8;
+  transition:fill 0.4s ease, opacity 0.05s
+}
+#logo-dot-span.lit{
+  fill:#c94e18;
+  filter:url(#neon-glow)
+}
+#logo-dot-span.flicker{
+  animation:brokenNeon 3.2s 0.4s infinite
+}
+@keyframes brokenNeon{
+  0%    {opacity:1}
+  4%    {opacity:.2}
+  5%    {opacity:1}
+  8%    {opacity:.08}
+  9%    {opacity:1}
+  30%   {opacity:1}
+  31%   {opacity:.25}
+  31.5% {opacity:1}
+  32%   {opacity:.35}
+  32.5% {opacity:1}
+  60%   {opacity:1}
+  61%   {opacity:0}
+  62%   {opacity:1}
+  63%   {opacity:.15}
+  63.5% {opacity:1}
+  92%   {opacity:1}
+  93%   {opacity:.08}
+  93.4% {opacity:1}
+  93.8% {opacity:.5}
+  94.2% {opacity:1}
+  100%  {opacity:1}
+}
+
+/* AR logo */
+.hero-ar-logo{
+  font-family:'Amiri',serif;
+  font-size:clamp(76px,15vw,200px);
+  font-weight:400;display:none;
+  color:var(--text);letter-spacing:.03em;line-height:1;
+  justify-content:center;align-items:baseline;
+  gap:.04em;font-style:italic
+}
+.hero-ar-logo .dot{
+  color:var(--ore);font-family:var(--sans);font-weight:200;
+  font-size:.52em;line-height:1;display:inline-block;
+  align-self:flex-start;margin-top:.2em
+}
+
+.hero-tagline{
+  font-size:10px;letter-spacing:.32em;text-transform:uppercase;
+  color:var(--text3);margin-top:20px;font-weight:300;
+  opacity:0
+}
+
+/* Scroll cue */
+.scroll-cue{
+  position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;opacity:0
+}
+.scroll-line{
+  width:1px;height:40px;
+  background:linear-gradient(to bottom,transparent,rgba(255,107,44,.35),transparent);
+  animation:linePulse 2.2s ease-in-out infinite
+}
+@keyframes linePulse{0%,100%{opacity:.2;transform:scaleY(.7)}50%{opacity:.65;transform:scaleY(1)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── MARQUEE ────────────────────────────────────────────────── */
+.marquee-strip{
+  overflow:hidden;border-top:1px solid rgba(255,255,255,.05);
+  border-bottom:1px solid rgba(255,255,255,.05);
+  padding:15px 0;position:relative;z-index:2;
+  background:rgba(6,6,5,.4)
+}
+.marquee-track{
+  display:flex;width:max-content;
+  animation:marquee 28s linear infinite
+}
+.marquee-track:hover{animation-play-state:paused}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-33.333%)}}
+.marquee-word{
+  display:inline-block;padding:0 30px;
+  font-size:10px;font-weight:200;letter-spacing:.18em;
+  text-transform:uppercase;color:rgba(240,235,228,.22);white-space:nowrap
+}
+.marquee-sep{color:rgba(255,107,44,.4);margin-left:12px}
+
+/* ── SHARED SECTION ─────────────────────────────────────────── */
+section{position:relative;z-index:2}
+.eyebrow{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ore);margin-bottom:14px}
+.sec-h{
+  font-family:var(--serif);font-size:clamp(30px,4.2vw,50px);
+  font-weight:300;color:var(--text);line-height:1.12;
+  margin-bottom:56px;max-width:480px
+}
+
+/* ── SERVICES ───────────────────────────────────────────────── */
+.services{padding:120px 52px;max-width:1160px;margin:0 auto}
+.srv-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--glass-b);
+  border:1px solid var(--glass-b);border-radius:32px;overflow:hidden
+}
+.srv{
+  padding:50px 44px;
+  background:rgba(6,6,5,.75);
+  backdrop-filter:blur(28px) saturate(1.5);
+  -webkit-backdrop-filter:blur(28px) saturate(1.5);
+  position:relative;overflow:hidden;transition:background .3s
+}
+.srv::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 0% 100%,rgba(255,107,44,.07),transparent 60%);
+  opacity:0;transition:opacity .4s
+}
+.srv:hover{background:rgba(12,11,10,.88)}
+.srv:hover::before{opacity:1}
+.srv-num{font-size:11px;letter-spacing:.1em;color:var(--ore);margin-bottom:24px;display:block}
+.srv h3{font-family:var(--serif);font-size:24px;font-weight:300;color:var(--text);margin-bottom:12px}
+.srv p{font-size:13px;font-weight:200;color:var(--text2);line-height:1.75}
+
+/* ── PRICING ────────────────────────────────────────────────── */
+.pricing{padding:120px 52px;position:relative;overflow:hidden}
+.pricing::before{
+  content:'';position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:700px;height:700px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,107,44,.035),transparent 70%);
+  pointer-events:none
+}
+.pricing-inner{max-width:1160px;margin:0 auto;position:relative;z-index:1}
+.p-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.p-card{
+  border-radius:28px;border:1px solid var(--glass-b);
+  background:rgba(10,10,9,.65);
+  backdrop-filter:blur(32px) saturate(1.5);
+  -webkit-backdrop-filter:blur(32px) saturate(1.5);
+  padding:44px 36px;position:relative;
+  transition:transform .35s var(--ease),border-color .3s,box-shadow .3s
+}
+.p-card:hover{
+  transform:translateY(-8px);
+  border-color:rgba(255,107,44,.2);
+  box-shadow:0 28px 64px rgba(0,0,0,.45),0 0 44px rgba(255,107,44,.06) inset
+}
+.p-tier{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:8px}
+.p-name{font-family:var(--serif);font-size:22px;font-weight:300;color:var(--text);margin-bottom:24px}
+.p-price{display:flex;align-items:baseline;gap:4px;margin-bottom:32px}
+.p-curr{font-size:15px;color:var(--text3);margin-top:8px;align-self:flex-start}
+.p-amt{font-family:var(--serif);font-size:50px;font-weight:300;color:var(--text);line-height:1}
+.p-per{font-size:12px;color:var(--text3)}
+.p-div{height:1px;background:var(--glass-b);margin-bottom:24px}
+.p-feats{list-style:none;display:flex;flex-direction:column;gap:12px;margin-bottom:40px}
+.p-feats li{
+  font-size:13px;font-weight:200;color:var(--text2);
+  display:flex;align-items:center;gap:10px
+}
+.p-feats li::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--ore);flex-shrink:0}
+.p-feats li.off::before{background:var(--text3)}
+.p-feats li.off{color:var(--text3)}
+.chip{
+  display:inline-flex;align-items:center;
+  background:var(--ore-dim);border:1px solid rgba(255,107,44,.18);
+  border-radius:100px;padding:2px 9px;font-size:9px;
+  color:var(--ore2);letter-spacing:.05em;text-transform:uppercase;
+  margin-left:6px;vertical-align:middle
+}
+.btn-p{
+  width:100%;padding:15px;border-radius:100px;
+  border:1px solid var(--glass-bs);background:transparent;
+  color:var(--text);font-family:var(--sans);font-size:13px;
+  font-weight:300;cursor:pointer;
+  transition:background .2s,border-color .2s,transform .15s
+}
+.btn-p:hover{background:var(--glass-md);border-color:rgba(255,107,44,.3);transform:translateY(-1px)}
+
+/* ── PROCESS ────────────────────────────────────────────────── */
+.process{padding:120px 52px;max-width:1160px;margin:0 auto}
+.pr-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1px;background:var(--glass-b);
+  border:1px solid var(--glass-b);border-radius:28px;overflow:hidden;
+  margin-top:56px
+}
+.pr{
+  padding:40px 32px;background:rgba(6,6,5,.78);
+  backdrop-filter:blur(20px);transition:background .3s;
+  position:relative;overflow:hidden
+}
+.pr::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;
+  height:1.5px;
+  background:linear-gradient(90deg,transparent,var(--ore),transparent);
+  transform:scaleX(0);transition:transform .5s var(--ease)
+}
+.pr:hover{background:rgba(14,13,11,.92)}
+.pr:hover::after{transform:scaleX(1)}
+.pr-n{font-family:var(--serif);font-size:48px;font-weight:300;color:rgba(240,235,228,.3);line-height:1;margin-bottom:20px}
+.pr h4{font-family:var(--serif);font-size:19px;font-weight:300;color:var(--text);margin-bottom:10px}
+.pr p{font-size:13px;font-weight:200;color:var(--text2);line-height:1.65}
+
+/* ── ABOUT ──────────────────────────────────────────────────── */
+.about{padding:120px 52px;position:relative}
+.about-inner{max-width:1160px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:90px;align-items:center}
+.about h2{font-family:var(--serif);font-size:clamp(34px,4.2vw,50px);font-weight:300;color:var(--text);line-height:1.12;margin-bottom:20px}
+.about-body{font-size:14px;font-weight:200;color:var(--text2);line-height:1.9;margin-bottom:32px}
+.chips{display:flex;gap:10px;flex-wrap:wrap}
+.chip-tag{
+  background:var(--glass);border:1px solid var(--glass-b);
+  border-radius:100px;padding:6px 16px;font-size:10px;
+  color:var(--text3);letter-spacing:.06em;text-transform:uppercase;
+  transition:border-color .2s,color .2s
+}
+.chip-tag:hover{border-color:rgba(255,107,44,.35);color:var(--ore2)}
+.about-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.a-stat{
+  border-radius:22px;padding:32px 28px;
+  border:1px solid var(--glass-b);
+  background:var(--glass);
+  backdrop-filter:blur(20px);
+  transition:transform .3s var(--ease),border-color .3s,box-shadow .3s;
+  animation:breathe 4s ease-in-out infinite alternate
+}
+.a-stat:nth-child(2){animation-delay:.8s}
+.a-stat:nth-child(3){animation-delay:1.6s}
+.a-stat:nth-child(4){animation-delay:2.4s}
+@keyframes breathe{from{border-color:var(--glass-b)}to{border-color:rgba(255,107,44,.13)}}
+.a-stat:hover{transform:translateY(-5px);border-color:rgba(255,107,44,.25);box-shadow:0 12px 40px rgba(255,107,44,.08)}
+.a-n{font-family:var(--serif);font-size:42px;font-weight:300;color:var(--text);line-height:1;margin-bottom:6px}
+.a-n.o{background:linear-gradient(135deg,var(--ore),var(--ore2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.a-l{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)}
+
+/* ── CONTACT ────────────────────────────────────────────────── */
+.contact{padding:120px 52px;text-align:center}
+.contact-wrap{
+  max-width:620px;margin:0 auto;
+  border-radius:36px;border:1px solid var(--glass-bs);
+  background:rgba(10,10,9,.65);
+  backdrop-filter:blur(44px) saturate(1.6);
+  -webkit-backdrop-filter:blur(44px) saturate(1.6);
+  padding:72px 64px;position:relative;overflow:hidden
+}
+.contact-wrap::before{
+  content:'';position:absolute;top:-100px;left:50%;
+  transform:translateX(-50%);width:360px;height:360px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,107,44,.065),transparent 70%);
+  pointer-events:none
+}
+.contact h2{
+  font-family:var(--serif);font-size:clamp(32px,4.2vw,48px);
+  font-weight:300;color:var(--text);margin-bottom:14px;line-height:1.12;
+  position:relative;z-index:1
+}
+.contact h2 em{
+  font-style:italic;
+  background:linear-gradient(135deg,var(--ore),var(--ore2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text
+}
+.contact-sub{
+  font-size:14px;font-weight:200;color:var(--text2);
+  margin-bottom:44px;line-height:1.8;position:relative;z-index:1
+}
+.contact-links{display:flex;flex-direction:column;gap:12px;position:relative;z-index:1}
+.cl{
+  display:flex;align-items:center;gap:14px;
+  padding:16px 22px;border-radius:16px;
+  border:1px solid var(--glass-b);
+  background:rgba(255,107,44,.03);
+  color:var(--text2);font-size:14px;font-weight:200;
+  text-decoration:none;
+  transition:border-color .2s,background .2s,transform .2s,color .2s
+}
+.cl:hover{border-color:rgba(255,107,44,.3);background:rgba(255,107,44,.06);color:var(--text);transform:translateX(4px)}
+.cl-icon{font-size:17px;color:var(--ore);width:28px;text-align:center;flex-shrink:0}
+.cl-text{flex:1;text-align:left}
+.cl-arr{color:var(--text3);font-size:14px;transition:transform .2s,color .2s}
+.cl:hover .cl-arr{transform:translate(3px,-3px);color:var(--ore)}
+
+/* ── FOOTER ─────────────────────────────────────────────────── */
+footer{
+  padding:40px 52px;border-top:1px solid var(--glass-b);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:20px;position:relative;z-index:2
+}
+.foot-links{display:flex;align-items:center;gap:26px}
+footer a{font-size:11px;font-weight:200;color:var(--text3);text-decoration:none;letter-spacing:.05em;transition:color .2s}
+footer a:hover{color:var(--ore)}
+footer p{font-size:11px;color:var(--text3)}
+.foot-logo-ar{display:none!important}
+
+/* ── REVEAL / FADE-IN ───────────────────────────────────────── */
+.fade-in{
+  opacity:0;transform:translateY(40px);filter:blur(5px);
+  transition:opacity .9s var(--ease),transform .9s var(--ease),filter .9s var(--ease)
+}
+.fade-in.visible{opacity:1;transform:translateY(0);filter:blur(0)}
+.fade-in[data-d="1"]{transition-delay:.06s}
+.fade-in[data-d="2"]{transition-delay:.14s}
+.fade-in[data-d="3"]{transition-delay:.22s}
+.fade-in[data-d="4"]{transition-delay:.30s}
+
+/* ── CARD TILT ──────────────────────────────────────────────── */
+.srv,.p-card,.pr,.a-stat{
+  transition:background .3s,border-color .3s,transform .35s var(--ease),box-shadow .35s
+}
+.srv:hover{box-shadow:0 0 60px rgba(255,107,44,.06) inset}
+.pr:hover{box-shadow:0 0 40px rgba(255,107,44,.05) inset}
+
+/* ── RTL ────────────────────────────────────────────────────── */
+html[dir="rtl"] body,html[dir="rtl"] p,html[dir="rtl"] li,
+html[dir="rtl"] a,html[dir="rtl"] button{font-family:var(--ar)}
+html[dir="rtl"] .about-inner{direction:rtl}
+html[dir="rtl"] .hero-forme{display:none}
+html[dir="rtl"] .hero-ar-logo{display:flex}
+html[dir="rtl"] .logo-en{display:none}
+html[dir="rtl"] .logo-ar{display:block}
+html[dir="rtl"] .foot-logo-en{display:none!important}
+html[dir="rtl"] .foot-logo-ar{display:block!important}
+html[dir="rtl"] .cl:hover{transform:translateX(-4px)}
+html[dir="rtl"] .cl-text{text-align:right}
+
+/* ── SCROLLBAR ──────────────────────────────────────────────── */
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:rgba(255,107,44,.2);border-radius:2px}
+
+/* ── RESPONSIVE ─────────────────────────────────────────────── */
+@media(max-width:960px){
+  nav{padding:0 24px}
+  nav ul li:not(:last-child){display:none}
+  .srv-grid{grid-template-columns:1fr}
+  .p-grid{grid-template-columns:1fr}
+  .pr-grid{grid-template-columns:1fr 1fr}
+  .about-inner{grid-template-columns:1fr;gap:50px}
+  .services,.pricing,.process,.about,.contact{padding:80px 20px}
+  .contact-wrap{padding:44px 28px}
+}
+@media(max-width:560px){
+  .pr-grid{grid-template-columns:1fr}
+  footer{padding:32px 20px}
+}
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+<div id="cursor-glow"></div>
+
+<!-- NAV -->
+<nav id="main-nav">
+  <a href="#" class="logo-en foot-logo-en" id="nav-logo-en">Form&#233;<span>.</span></a>
+  <a href="#" class="logo-ar foot-logo-ar" id="nav-logo-ar">&#x635;&#x650;&#x64A;&#x64E;&#x627;&#x63A;&#x64E;&#x629;<span>.</span></a>
+  <ul>
+    <li><a href="#services" data-en="Services" data-ar="&#1575;&#1604;&#1582;&#1583;&#1605;&#1575;&#1578;">Services</a></li>
+    <li><a href="#pricing" data-en="Pricing" data-ar="&#1575;&#1604;&#1571;&#1587;&#1593;&#1575;&#1585;">Pricing</a></li>
+    <li><a href="#about" data-en="About" data-ar="&#1593;&#1606;&#1610;">About</a></li>
+    <li><a href="#contact" class="nav-cta" data-en="Let&#39;s talk" data-ar="&#1578;&#1608;&#1575;&#1589;&#1604;">Let&#39;s talk</a></li>
+  </ul>
+  <div class="lang-toggle">
+    <button class="lb on" id="btn-en" onclick="setLang('en')">EN</button>
+    <button class="lb" id="btn-ar" onclick="setLang('ar')">&#1593;</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+
+  <div class="hero-logo-wrap" id="hero-logo-wrap">
+    <!-- EN: SVG handwriting logo — matches nav Great Vibes font -->
+    <div class="hero-forme" id="hero-forme">
+      <svg id="logo-svg" viewBox="0 0 560 175" xmlns="http://www.w3.org/2000/svg" aria-label="Formé.">
+        <defs>
+          <filter id="neon-glow" x="-15%" y="-15%" width="130%" height="130%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
+            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+          </filter>
+        </defs>
+        <text id="logo-text" x="8" y="148">Form&#233;<tspan id="logo-dot-span">.</tspan></text>
+      </svg>
+    </div>
+    <!-- AR logo — shown in RTL mode -->
+    <div class="hero-ar-logo" id="hero-ar-logo">&#x635;&#x650;&#x64A;&#x64E;&#x627;&#x63A;&#x64E;&#x629;<span class="dot">.</span></div>
+  </div>
+
+  <div class="hero-tagline" id="hero-tagline">Web Development</div>
+
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-strip" aria-hidden="true">
+  <div class="marquee-track" id="marquee-track"></div>
+</div>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <div class="eyebrow fade-in" data-en="What I offer" data-ar="&#1605;&#1575; &#1571;&#1602;&#1583;&#1605;&#1607;">What I offer</div>
+  <h2 class="sec-h fade-in" data-en="Shaped by purpose" data-ar="&#1605;&#1589;&#1606;&#1608;&#1593; &#1576;&#1607;&#1583;&#1601;">Shaped by purpose</h2>
+  <div class="srv-grid">
+    <div class="srv fade-in" data-d="1">
+      <span class="srv-num">01</span>
+      <h3 data-en="Static Websites" data-ar="&#1605;&#1608;&#1575;&#1602;&#1593; &#1579;&#1575;&#1576;&#1578;&#1577;">Static Websites</h3>
+      <p data-en="Fast, clean, precise &#8212; portfolios, CVs, personal brands." data-ar="&#1587;&#1585;&#1610;&#1593;&#1577;&#1548; &#1606;&#1592;&#1610;&#1601;&#1577;&#1548; &#1583;&#1602;&#1610;&#1602;&#1577; &#8212; &#1576;&#1608;&#1585;&#1578;&#1601;&#1608;&#1604;&#1610;&#1608; &#1608;&#1593;&#1604;&#1575;&#1605;&#1575;&#1578; &#1588;&#1582;&#1589;&#1610;&#1577;.">Fast, clean, precise &#8212; portfolios, CVs, personal brands.</p>
+    </div>
+    <div class="srv fade-in" data-d="2">
+      <span class="srv-num">02</span>
+      <h3 data-en="Animated Experiences" data-ar="&#1578;&#1580;&#1575;&#1585;&#1576; &#1605;&#1578;&#1581;&#1585;&#1603;&#1577;">Animated Experiences</h3>
+      <p data-en="Scroll animations, micro-interactions &#8212; pages that feel alive." data-ar="&#1575;&#1606;&#1610;&#1605;&#1610;&#1588;&#1606; &#1608;&#1578;&#1601;&#1575;&#1593;&#1604;&#1575;&#1578; &#1583;&#1602;&#1610;&#1602;&#1577; &#8212; &#1589;&#1601;&#1581;&#1575;&#1578; &#1578;&#1588;&#1593;&#1585; &#1576;&#1571;&#1606;&#1607;&#1575; &#1581;&#1610;&#1577;.">Scroll animations, micro-interactions &#8212; pages that feel alive.</p>
+    </div>
+    <div class="srv fade-in" data-d="3">
+      <span class="srv-num">03</span>
+      <h3 data-en="Landing Pages" data-ar="&#1589;&#1601;&#1581;&#1575;&#1578; &#1575;&#1604;&#1607;&#1576;&#1608;&#1591;">Landing Pages</h3>
+      <p data-en="High-conversion pages built to stop the scroll." data-ar="&#1589;&#1601;&#1581;&#1575;&#1578; &#1578;&#1580;&#1584;&#1576; &#1575;&#1604;&#1575;&#1606;&#1578;&#1576;&#1575;&#1607; &#1608;&#1578;&#1581;&#1608;&#1617;&#1604; &#1575;&#1604;&#1586;&#1608;&#1575;&#1585;.">High-conversion pages built to stop the scroll.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="pricing-inner">
+    <div class="eyebrow fade-in" data-en="Investment" data-ar="&#1575;&#1604;&#1575;&#1587;&#1578;&#1579;&#1605;&#1575;&#1585;">Investment</div>
+    <h2 class="sec-h fade-in" data-en="Clear pricing" data-ar="&#1571;&#1587;&#1593;&#1575;&#1585; &#1608;&#1575;&#1590;&#1581;&#1577;">Clear pricing</h2>
+    <div class="p-grid">
+
+      <!-- Plan 1 -->
+      <div class="p-card fade-in" data-d="1">
+        <div class="p-tier" data-en="Essential" data-ar="&#1575;&#1604;&#1571;&#1587;&#1575;&#1587;&#1610;&#1577;">Essential</div>
+        <div class="p-name" data-en="Clean &amp; precise" data-ar="&#1606;&#1592;&#1610;&#1601; &#1608;&#1583;&#1602;&#1610;&#1602;">Clean &amp; precise</div>
+        <div class="p-price">
+          <span class="p-curr">&#1580;.&#1605;</span>
+          <span class="p-amt">5,000</span>
+          <span class="p-per" data-en="/ project" data-ar="/ &#1605;&#1588;&#1585;&#1608;&#1593;">/ project</span>
+        </div>
+        <div class="p-div"></div>
+        <ul class="p-feats">
+          <li data-en="Up to 5 pages" data-ar="&#1581;&#1578;&#1609; 5 &#1589;&#1601;&#1581;&#1575;&#1578;">Up to 5 pages</li>
+          <li data-en="Mobile responsive design" data-ar="&#1578;&#1589;&#1605;&#1610;&#1605; &#1605;&#1578;&#1580;&#1575;&#1608;&#1576; &#1605;&#1593; &#1575;&#1604;&#1580;&#1608;&#1575;&#1604;">Mobile responsive design</li>
+          <li data-en="SEO foundation" data-ar="&#1571;&#1587;&#1575;&#1587;&#1610;&#1575;&#1578; SEO">SEO foundation</li>
+          <li data-en="Contact form" data-ar="&#1606;&#1605;&#1608;&#1584;&#1580; &#1578;&#1608;&#1575;&#1589;&#1604;">Contact form</li>
+          <li data-en="10-day delivery" data-ar="&#1578;&#1587;&#1604;&#1610;&#1605; 10 &#1571;&#1610;&#1575;&#1605;">10-day delivery</li>
+          <li data-en="1 revision round" data-ar="&#1580;&#1608;&#1604;&#1577; &#1578;&#1593;&#1583;&#1610;&#1604; &#1608;&#1575;&#1581;&#1583;&#1577;">1 revision round</li>
+          <li class="off" data-en="Animations" data-ar="&#1575;&#1606;&#1610;&#1605;&#1610;&#1588;&#1606;">Animations</li>
+          <li class="off" data-en="Custom interactions" data-ar="&#1578;&#1601;&#1575;&#1593;&#1604;&#1575;&#1578; &#1605;&#1582;&#1589;&#1589;&#1577;">Custom interactions</li>
+        </ul>
+        <button class="btn-p" onclick="scrollToContact()" data-en="Get started" data-ar="&#1575;&#1576;&#1583;&#1571; &#1575;&#1604;&#1570;&#1606;">Get started</button>
+      </div>
+
+      <!-- Plan 2 -->
+      <div class="p-card fade-in" data-d="2">
+        <div class="p-tier" data-en="Signature" data-ar="&#1575;&#1604;&#1605;&#1605;&#1610;&#1617;&#1586;&#1577;">Signature</div>
+        <div class="p-name" data-en="Animated &amp; alive" data-ar="&#1605;&#1578;&#1581;&#1585;&#1603; &#1608;&#1581;&#1610;">Animated &amp; alive</div>
+        <div class="p-price">
+          <span class="p-curr">&#1580;.&#1605;</span>
+          <span class="p-amt">8,000</span>
+          <span class="p-per" data-en="/ project" data-ar="/ &#1605;&#1588;&#1585;&#1608;&#1593;">/ project</span>
+        </div>
+        <div class="p-div"></div>
+        <ul class="p-feats">
+          <li data-en="Up to 10 pages" data-ar="&#1581;&#1578;&#1609; 10 &#1589;&#1601;&#1581;&#1575;&#1578;">Up to 10 pages</li>
+          <li data-en="Mobile responsive design" data-ar="&#1578;&#1589;&#1605;&#1610;&#1605; &#1605;&#1578;&#1580;&#1575;&#1608;&#1576; &#1605;&#1593; &#1575;&#1604;&#1580;&#1608;&#1575;&#1604;">Mobile responsive design</li>
+          <li>Scroll animations <span class="chip">&#10022; live</span></li>
+          <li data-en="Micro-interactions" data-ar="&#1578;&#1601;&#1575;&#1593;&#1604;&#1575;&#1578; &#1583;&#1602;&#1610;&#1602;&#1577;">Micro-interactions</li>
+          <li data-en="Advanced SEO" data-ar="SEO &#1605;&#1578;&#1602;&#1583;&#1605;">Advanced SEO</li>
+          <li data-en="Custom contact form" data-ar="&#1606;&#1605;&#1608;&#1584;&#1580; &#1578;&#1608;&#1575;&#1589;&#1604; &#1605;&#1582;&#1589;&#1589;">Custom contact form</li>
+          <li data-en="21-day delivery" data-ar="&#1578;&#1587;&#1604;&#1610;&#1605; 21 &#1610;&#1608;&#1605;&#1575;&#1611;">21-day delivery</li>
+          <li data-en="2 revision rounds" data-ar="&#1580;&#1608;&#1604;&#1578;&#1575;&#1606; &#1604;&#1604;&#1578;&#1593;&#1583;&#1610;&#1604;">2 revision rounds</li>
+        </ul>
+        <button class="btn-p" onclick="scrollToContact()" data-en="Start a project" data-ar="&#1575;&#1576;&#1583;&#1571; &#1605;&#1588;&#1585;&#1608;&#1593;&#1603;">Start a project</button>
+      </div>
+
+      <!-- Plan 3 -->
+      <div class="p-card fade-in" data-d="3">
+        <div class="p-tier" data-en="Studio" data-ar="&#1575;&#1604;&#1575;&#1587;&#1578;&#1608;&#1583;&#1610;&#1608;">Studio</div>
+        <div class="p-name" data-en="Full experience" data-ar="&#1578;&#1580;&#1585;&#1576;&#1577; &#1603;&#1575;&#1605;&#1604;&#1577;">Full experience</div>
+        <div class="p-price">
+          <span class="p-curr">&#1580;.&#1605;</span>
+          <span class="p-amt">12,000</span>
+          <span class="p-per" data-en="/ project" data-ar="/ &#1605;&#1588;&#1585;&#1608;&#1593;">/ project</span>
+        </div>
+        <div class="p-div"></div>
+        <ul class="p-feats">
+          <li data-en="Unlimited pages" data-ar="&#1589;&#1601;&#1581;&#1575;&#1578; &#1594;&#1610;&#1585; &#1605;&#1581;&#1583;&#1608;&#1583;&#1577;">Unlimited pages</li>
+          <li data-en="Mobile responsive design" data-ar="&#1578;&#1589;&#1605;&#1610;&#1605; &#1605;&#1578;&#1580;&#1575;&#1608;&#1576; &#1605;&#1593; &#1575;&#1604;&#1580;&#1608;&#1575;&#1604;">Mobile responsive design</li>
+          <li>Full animations <span class="chip">&#10022; live</span></li>
+          <li data-en="Custom interactions &amp; effects" data-ar="&#1578;&#1601;&#1575;&#1593;&#1604;&#1575;&#1578; &#1608;&#1578;&#1571;&#1579;&#1610;&#1585;&#1575;&#1578; &#1605;&#1582;&#1589;&#1589;&#1577;">Custom interactions &amp; effects</li>
+          <li data-en="Full SEO setup" data-ar="&#1573;&#1593;&#1583;&#1575;&#1583; SEO &#1603;&#1575;&#1605;&#1604;">Full SEO setup</li>
+          <li data-en="Analytics integration" data-ar="&#1578;&#1603;&#1575;&#1605;&#1604; &#1575;&#1604;&#1578;&#1581;&#1604;&#1610;&#1604;&#1575;&#1578;">Analytics integration</li>
+          <li data-en="Performance optimization" data-ar="&#1578;&#1581;&#1587;&#1610;&#1606; &#1575;&#1604;&#1571;&#1583;&#1575;&#1569;">Performance optimization</li>
+          <li data-en="45-day delivery" data-ar="&#1578;&#1587;&#1604;&#1610;&#1605; 45 &#1610;&#1608;&#1605;&#1575;&#1611;">45-day delivery</li>
+          <li data-en="3 revision rounds" data-ar="3 &#1580;&#1608;&#1604;&#1575;&#1578; &#1604;&#1604;&#1578;&#1593;&#1583;&#1610;&#1604;">3 revision rounds</li>
+        </ul>
+        <button class="btn-p" onclick="scrollToContact()" data-en="Get in touch" data-ar="&#1578;&#1608;&#1575;&#1589;&#1604; &#1605;&#1593;&#1610;">Get in touch</button>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process">
+  <div class="eyebrow fade-in" data-en="How it works" data-ar="&#1603;&#1610;&#1601; &#1571;&#1593;&#1605;&#1604;">How it works</div>
+  <h2 class="sec-h fade-in" data-en="From idea to live" data-ar="&#1605;&#1606; &#1575;&#1604;&#1601;&#1603;&#1585;&#1577; &#1604;&#1604;&#1573;&#1591;&#1604;&#1575;&#1602;">From idea to live</h2>
+  <div class="pr-grid">
+    <div class="pr fade-in" data-d="1"><div class="pr-n">01</div><h4 data-en="Discovery" data-ar="&#1575;&#1604;&#1575;&#1603;&#1578;&#1588;&#1575;&#1601;">Discovery</h4><p data-en="We talk. I listen." data-ar="&#1606;&#1578;&#1581;&#1583;&#1579;. &#1571;&#1606;&#1575; &#1571;&#1587;&#1605;&#1593;.">We talk. I listen.</p></div>
+    <div class="pr fade-in" data-d="2"><div class="pr-n">02</div><h4 data-en="Design" data-ar="&#1575;&#1604;&#1578;&#1589;&#1605;&#1610;&#1605;">Design</h4><p data-en="Direction before code." data-ar="&#1575;&#1578;&#1580;&#1575;&#1607; &#1602;&#1576;&#1604; &#1575;&#1604;&#1603;&#1608;&#1583;.">Direction before code.</p></div>
+    <div class="pr fade-in" data-d="3"><div class="pr-n">03</div><h4 data-en="Build" data-ar="&#1575;&#1604;&#1576;&#1606;&#1575;&#1569;">Build</h4><p data-en="Clean, performant code." data-ar="&#1603;&#1608;&#1583; &#1606;&#1592;&#1610;&#1601; &#1608;&#1587;&#1585;&#1610;&#1593;.">Clean, performant code.</p></div>
+    <div class="pr fade-in" data-d="4"><div class="pr-n">04</div><h4 data-en="Launch" data-ar="&#1575;&#1604;&#1573;&#1591;&#1604;&#1575;&#1602;">Launch</h4><p data-en="Live &#8212; and I stay." data-ar="&#1573;&#1591;&#1604;&#1575;&#1602; &#8212; &#1608;&#1571;&#1576;&#1602;&#1609; &#1605;&#1593;&#1603;.">Live &#8212; and I stay.</p></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-inner">
+    <div>
+      <div class="eyebrow fade-in" data-en="Who I am" data-ar="&#1605;&#1606; &#1571;&#1606;&#1575;">Who I am</div>
+      <h2 data-en="Ali Abdeen &#8212;<br>Designer &amp; Digital Artist" data-ar="&#1593;&#1604;&#1610; &#1593;&#1576;&#1583;&#1610;&#1606; &#8212;<br>&#1605;&#1589;&#1605;&#1605; &#1608;&#1601;&#1606;&#1575;&#1606; &#1585;&#1602;&#1605;&#1610;">Ali Abdeen &#8212;<br>Designer &amp; Digital Artist</h2>
+      <p class="about-body" data-en="Cairo-based web designer at the edge of generative art and intentional design. Creator of VOID &#8212; a generative glitch gallery built with Claude." data-ar="&#1605;&#1589;&#1605;&#1605; &#1605;&#1608;&#1575;&#1602;&#1593; &#1605;&#1606; &#1575;&#1604;&#1602;&#1575;&#1607;&#1585;&#1577; &#1610;&#1593;&#1605;&#1604; &#1593;&#1606;&#1583; &#1581;&#1583;&#1608;&#1583; &#1575;&#1604;&#1601;&#1606; &#1575;&#1604;&#1578;&#1608;&#1604;&#1610;&#1583;&#1610;. &#1605;&#1576;&#1578;&#1603;&#1585; &#1605;&#1593;&#1585;&#1590; VOID &#8212; &#1605;&#1576;&#1606;&#1610; &#1605;&#1593; &#1603;&#1604;&#1608;&#1583;.">Cairo-based web designer at the edge of generative art and intentional design. Creator of VOID &#8212; a generative glitch gallery built with Claude.</p>
+      <div class="chips">
+        <span class="chip-tag" data-en="Cairo, Egypt" data-ar="&#1575;&#1604;&#1602;&#1575;&#1607;&#1585;&#1577;&#1548; &#1605;&#1589;&#1585;">Cairo, Egypt</span>
+        <span class="chip-tag" data-en="Web Design" data-ar="&#1578;&#1589;&#1605;&#1610;&#1605; &#1605;&#1608;&#1575;&#1602;&#1593;">Web Design</span>
+        <span class="chip-tag" data-en="Generative Art" data-ar="&#1601;&#1606; &#1578;&#1608;&#1604;&#1610;&#1583;&#1610;">Generative Art</span>
+      </div>
+    </div>
+    <div class="about-stats">
+      <div class="a-stat fade-in" data-d="1"><div class="a-n o">48+</div><div class="a-l" data-en="Projects" data-ar="&#1605;&#1588;&#1585;&#1608;&#1593;">Projects</div></div>
+      <div class="a-stat fade-in" data-d="2"><div class="a-n">4+</div><div class="a-l" data-en="Years" data-ar="&#1587;&#1606;&#1608;&#1575;&#1578;">Years</div></div>
+      <div class="a-stat fade-in" data-d="3"><div class="a-n">&#8734;</div><div class="a-l" data-en="Ideas" data-ar="&#1571;&#1601;&#1603;&#1575;&#1585;">Ideas</div></div>
+      <div class="a-stat fade-in" data-d="4"><div class="a-n o">&#10022;</div><div class="a-l" data-en="Global reach" data-ar="&#1608;&#1589;&#1608;&#1604; &#1593;&#1575;&#1604;&#1605;&#1610;">Global reach</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="contact-wrap fade-in">
+    <h2 data-en="Start something<br><em>beautiful</em>" data-ar="&#1575;&#1576;&#1583;&#1571; &#1588;&#1610;&#1574;&#1575;&#1611;<br><em>&#1580;&#1605;&#1610;&#1604;&#1575;&#1611;</em>">Start something<br><em>beautiful</em></h2>
+    <p class="contact-sub" data-en="I love making unique art websites for the world. Tell me your vision." data-ar="&#1571;&#1581;&#1576; &#1589;&#1606;&#1593; &#1605;&#1608;&#1575;&#1602;&#1593; &#1601;&#1606;&#1610;&#1577; &#1601;&#1585;&#1610;&#1583;&#1577; &#1604;&#1604;&#1593;&#1575;&#1604;&#1605;. &#1571;&#1582;&#1576;&#1585;&#1606;&#1610; &#1576;&#1585;&#1572;&#1610;&#1578;&#1603;.">I love making unique art websites for the world. Tell me your vision.</p>
+    <div class="contact-links">
+      <a href="mailto:hello@aliabdeen.com" class="cl">
+        <span class="cl-icon">&#9993;</span>
+        <span class="cl-text">hello@aliabdeen.com</span>
+        <span class="cl-arr">&#8599;</span>
+      </a>
+      <a href="tel:+201055155784" class="cl">
+        <span class="cl-icon">&#9990;</span>
+        <span class="cl-text">010 5515 5784</span>
+        <span class="cl-arr">&#8599;</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <a href="#" class="logo-en foot-logo-en">Form&#233;<span>.</span></a>
+  <a href="#" class="logo-ar foot-logo-ar" style="font-family:'Amiri',serif;font-size:24px;font-weight:400;font-style:italic">&#x635;&#x650;&#x64A;&#x64E;&#x627;&#x63A;&#x64E;&#x629;<span>.</span></a>
+  <div class="foot-links">
+    <a href="https://aliabdeenx.github.io/void-gallery/" target="_blank" rel="noopener">VOID &#8599;</a>
+    <a href="#contact" data-en="Contact" data-ar="&#1578;&#1608;&#1575;&#1589;&#1604;">Contact</a>
+    <p data-en="&#169; 2026 Form&#233;" data-ar="&#169; 2026 &#x635;&#x650;&#x64A;&#x64E;&#x627;&#x63A;&#x64E;&#x629;">&#169; 2026 Form&#233;</p>
+  </div>
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   BG CANVAS — particle field + orbs
+═══════════════════════════════════════════════════════════ */
+(function(){
+  const cv = document.getElementById('bg-canvas');
+  const cx = cv.getContext('2d');
+  let W, H, pts = [], t = 0, mx = 400, my = 300;
+
+  function resize(){ W = cv.width = innerWidth; H = cv.height = innerHeight; }
+  function initPts(){
+    pts = Array.from({length:88}, () => ({
+      x: Math.random()*W, y: Math.random()*H,
+      vx: (Math.random()-.5)*.18, vy: (Math.random()-.5)*.18,
+      r: Math.random()*1.4+.3,
+      a: Math.random()*.4+.05,
+      ph: Math.random()*Math.PI*2
+    }));
+  }
+  function orb(x,y,r,a){
+    const g = cx.createRadialGradient(x,y,0,x,y,r);
+    g.addColorStop(0,`rgba(255,107,44,${a})`);
+    g.addColorStop(1,'rgba(255,107,44,0)');
+    cx.fillStyle = g;
+    cx.beginPath(); cx.arc(x,y,r,0,Math.PI*2); cx.fill();
+  }
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+  function frame(){
+    cx.clearRect(0,0,W,H);
+    t += .004;
+    const s = Math.min(W,H);
+    orb(W*.76+Math.sin(t*.6)*80+(mx-W*.5)*.04, H*.18+Math.cos(t*.4)*60+(my-H*.5)*.03, s*.38, .05+Math.sin(t)*.014);
+    orb(W*.12+Math.cos(t*.5)*70+(mx-W*.5)*.025, H*.79+Math.sin(t*.7)*50+(my-H*.5)*.02, s*.29, .035+Math.sin(t*1.3)*.01);
+    orb(W*.5+Math.sin(t*.3)*100+(mx-W*.5)*.055, H*.5+Math.cos(t*.45)*80+(my-H*.5)*.045, s*.21, .022);
+
+    pts.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if(p.x < 0) p.x = W; if(p.x > W) p.x = 0;
+      if(p.y < 0) p.y = H; if(p.y > H) p.y = 0;
+      const al = p.a * (.6 + .4*Math.sin(t*2+p.ph));
+      cx.fillStyle = `rgba(255,${100+Math.sin(p.ph)*40},44,${al})`;
+      cx.beginPath(); cx.arc(p.x,p.y,p.r,0,Math.PI*2); cx.fill();
+    });
+
+    for(let i = 0; i < pts.length; i++){
+      for(let j = i+1; j < pts.length; j++){
+        const d = Math.hypot(pts[i].x-pts[j].x, pts[i].y-pts[j].y);
+        if(d < 110){
+          cx.strokeStyle = `rgba(255,107,44,${(1-d/110)*.055})`;
+          cx.lineWidth = .5;
+          cx.beginPath(); cx.moveTo(pts[i].x,pts[i].y); cx.lineTo(pts[j].x,pts[j].y); cx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  window.addEventListener('resize', () => { resize(); initPts(); });
+  resize(); initPts(); frame();
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   CURSOR GLOW — smooth follow
+═══════════════════════════════════════════════════════════ */
+(function(){
+  const glow = document.getElementById('cursor-glow');
+  let gx=0, gy=0, tx=0, ty=0;
+  document.addEventListener('mousemove', e => { tx = e.clientX; ty = e.clientY; });
+  (function loop(){
+    gx += (tx-gx) * .08;
+    gy += (ty-gy) * .08;
+    glow.style.left = gx + 'px';
+    glow.style.top  = gy + 'px';
+    requestAnimationFrame(loop);
+  })();
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   GLOBAL TEXT ELEMENT DISTORTION
+═══════════════════════════════════════════════════════════ */
+(function(){
+  const targets = [...document.querySelectorAll('.srv h3,.p-amt,.pr h4,.a-n')];
+  const R = 190, STR = 16;
+  let mx = 9999, my = 9999;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+  function tick(){
+    targets.forEach(el => {
+      const rc = el.getBoundingClientRect();
+      const cx = rc.left + rc.width/2, cy = rc.top + rc.height/2;
+      const dist = Math.hypot(mx-cx, my-cy);
+      if(dist < R){
+        const f = 1 - dist/R;
+        const angle = Math.atan2(my-cy, mx-cx);
+        el.style.transform = `translate(${-Math.cos(angle)*f*STR}px,${-Math.sin(angle)*f*STR*.7}px)`;
+        el.style.textShadow = `0 0 ${f*45}px rgba(255,107,44,${f*.3})`;
+      } else {
+        el.style.transform = '';
+        el.style.textShadow = '';
+      }
+    });
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   MAGNETIC NAV LOGO
+═══════════════════════════════════════════════════════════ */
+['nav-logo-en','nav-logo-ar'].forEach(id => {
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.addEventListener('mousemove', e => {
+    const r = el.getBoundingClientRect();
+    el.style.transform = `translate(${(e.clientX-r.left-r.width/2)*.36}px,${(e.clientY-r.top-r.height/2)*.36}px) scale(1.07)`;
+  });
+  el.addEventListener('mouseleave', () => { el.style.transform = ''; });
+});
+
+/* ═══════════════════════════════════════════════════════════
+   3D TILT — cards
+═══════════════════════════════════════════════════════════ */
+document.querySelectorAll('.srv,.p-card,.pr').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width  - .5;
+    const y = (e.clientY - r.top)  / r.height - .5;
+    card.style.transform = `translateY(-6px) rotateX(${-y*5}deg) rotateY(${x*5}deg)`;
+    card.style.transformStyle = 'preserve-3d';
+  });
+  card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+});
+
+/* ═══════════════════════════════════════════════════════════
+   MARQUEE BUILD
+═══════════════════════════════════════════════════════════ */
+(function(){
+  const words = ['Web Design','Motion','Landing Pages','Digital Art','Cairo, Egypt','Every pixel matters','Unique by nature','No templates'];
+  const track = document.getElementById('marquee-track');
+  const set = words.map(w =>
+    `<span class="marquee-word">${w}<span class="marquee-sep">&#10022;</span></span>`
+  ).join('');
+  track.innerHTML = set + set + set;
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   SCROLL FADE-IN (IntersectionObserver)
+═══════════════════════════════════════════════════════════ */
+(function(){
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: .1, rootMargin: '0px 0px -48px 0px' });
+
+  document.querySelectorAll('.fade-in').forEach(el => io.observe(el));
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   NAV SCROLL
+═══════════════════════════════════════════════════════════ */
+const mainNav = document.getElementById('main-nav');
+window.addEventListener('scroll', () => {
+  mainNav.classList.toggle('scrolled', window.scrollY > 50);
+}, { passive: true });
+
+/* ═══════════════════════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════════════════════ */
+function scrollToContact(){
+  document.getElementById('contact').scrollIntoView({ behavior:'smooth' });
+}
+
+/* ═══════════════════════════════════════════════════════════
+   LANGUAGE SWITCHER
+═══════════════════════════════════════════════════════════ */
+function setLang(lang){
+  const html = document.documentElement;
+  html.setAttribute('lang', lang);
+  html.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+
+  document.getElementById('btn-en').classList.toggle('on', lang === 'en');
+  document.getElementById('btn-ar').classList.toggle('on', lang === 'ar');
+
+  // Swap all [data-en] / [data-ar] text or innerHTML
+  document.querySelectorAll('[data-en]').forEach(el => {
+    const val = el.getAttribute('data-' + lang);
+    if(val === null) return;
+    // Use innerHTML for elements that may contain tags (<em>, <br>)
+    const tags = ['H1','H2','H3','H4','H5','H6','DIV','P','SPAN','A','BUTTON','LI'];
+    if(tags.includes(el.tagName)){
+      el.innerHTML = val;
+    } else {
+      el.textContent = val;
+    }
+  });
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   SVG HANDWRITING — draws Great Vibes "Formé." as if written,
+   then lights up as neon orange with a broken dot flicker
+═══════════════════════════════════════════════════════════ */
+(function(){
+  const svg  = document.getElementById('logo-svg');
+  const text = document.getElementById('logo-text');
+  const dot  = document.getElementById('logo-dot-span');
+  if(!svg || !text) return;
+
+  document.fonts.ready.then(() => {
+    let totalLen = 0;
+    try { totalLen = Math.ceil(text.getComputedTextLength()) * 4.2; } catch(e){ totalLen = 2200; }
+
+    text.style.strokeDasharray  = totalLen;
+    text.style.strokeDashoffset = totalLen;
+    dot.style.strokeDasharray   = totalLen;
+    dot.style.strokeDashoffset  = totalLen;
+
+    // Ink cursor
+    const cur = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    cur.setAttribute('r','4');
+    cur.setAttribute('fill','var(--ore)');
+    cur.setAttribute('opacity','0');
+    cur.style.pointerEvents = 'none';
+    svg.appendChild(cur);
+
+    const WRITE_MS = 2800;
+    const START_MS = 350;
+
+    setTimeout(() => {
+      text.style.transition = `stroke-dashoffset ${WRITE_MS/1000}s cubic-bezier(.4,0,.25,1)`;
+      dot.style.transition  = `stroke-dashoffset ${WRITE_MS/1000}s cubic-bezier(.4,0,.25,1)`;
+      text.style.strokeDashoffset = '0';
+      dot.style.strokeDashoffset  = '0';
+
+      // Cursor tracking
+      cur.setAttribute('opacity','1');
+      const FPS = 30, iv = 1000/FPS;
+      let elapsed = 0;
+      const timer = setInterval(() => {
+        elapsed += iv;
+        const p = Math.min(elapsed / WRITE_MS, 1);
+        try {
+          const n = text.textContent.length;
+          const i = Math.min(Math.floor(p * n), n - 1);
+          const s = text.getStartPositionOfChar(i);
+          const e = text.getEndPositionOfChar(i);
+          cur.setAttribute('cx', s.x + (p * n - i) * (e.x - s.x));
+          cur.setAttribute('cy', s.y - 10);
+        } catch(e){
+          cur.setAttribute('cx', 8 + p * 530);
+          cur.setAttribute('cy', 120);
+        }
+        if(p >= 1){
+          clearInterval(timer);
+          cur.setAttribute('opacity','0');
+
+          // ── NEON LIGHT-UP ──────────────────────────────────
+          // Short pause, then the whole name flicks on like a neon sign
+          setTimeout(() => {
+            // Quick stutter-on sequence: off → dim → off → full
+            const flicker = [
+              [0,   () => { text.style.fill = 'var(--ore)'; text.style.opacity = '.15'; dot.style.fill = 'var(--ore)'; dot.style.opacity = '.15'; }],
+              [80,  () => { text.style.opacity = '1'; dot.style.opacity = '1'; }],
+              [140, () => { text.style.opacity = '.05'; dot.style.opacity = '.05'; }],
+              [200, () => { text.style.opacity = '1'; dot.style.opacity = '1'; }],
+              [260, () => { text.style.opacity = '.3'; }],
+              [340, () => {
+                // Full neon on — add .lit class for glow filter + fill
+                text.classList.add('lit');
+                text.style.opacity = '1';
+                text.style.fill = '';
+                text.style.transition = '';
+
+                // Dot lights up separately with its stronger glow
+                dot.style.fill    = '#c94e18';
+                dot.style.stroke  = 'var(--ore)';
+                dot.style.filter  = 'url(#neon-glow)';
+                dot.style.opacity = '1';
+
+                // Start broken-bulb flicker on the dot after a beat
+                setTimeout(() => {
+                  dot.classList.add('flicker');
+                }, 600);
+              }],
+            ];
+            flicker.forEach(([ms, fn]) => setTimeout(fn, ms));
+          }, 200);
+        }
+      }, iv);
+
+    }, START_MS);
+
+    // Reveal tagline + scroll cue after writing finishes
+    const t0 = START_MS + WRITE_MS + 500;
+    const tagline = document.getElementById('hero-tagline');
+    if(tagline){
+      setTimeout(() => {
+        tagline.style.transition = 'opacity .9s var(--ease), transform .9s var(--ease)';
+        tagline.style.transform  = 'translateY(0)';
+        tagline.style.opacity    = '1';
+      }, t0);
+      tagline.style.transform = 'translateY(10px)';
+    }
+    const scrl = document.querySelector('.scroll-cue');
+    if(scrl){
+      setTimeout(() => {
+        scrl.style.transition = 'opacity .9s var(--ease)';
+        scrl.style.opacity = '1';
+      }, t0 + 400);
+    }
+  });
+})();
+
+</script>
+</body>
+</html>
